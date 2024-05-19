@@ -76,7 +76,7 @@ publishing {
                     password rootProject.findProperty('mavenPassword')
                 }
             }
-            url 'file:///var/www/html/maven/'
+            url System.getenv('local_maven_url')
         }
     }
 }
