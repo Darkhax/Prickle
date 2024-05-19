@@ -48,3 +48,33 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations."$variant".outgoing {
+        capability("$group:prickle:$version")
+    }
+    publishing.publications.configureEach {
+        suppressPomMetadataWarningsFor(variant)
+    }
+}
+
+// Sets up publishing for a remote maven.
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            if (rootProject.hasProperty('mavenUsername') && rootProject.hasProperty('mavenPassword')) {
+                credentials {
+                    username rootProject.findProperty('mavenUsername')
+                    password rootProject.findProperty('mavenPassword')
+                }
+            }
+            url rootProject.findProperty('mavenUrl')
+        }
+    }
+}
