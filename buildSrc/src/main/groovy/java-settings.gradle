@@ -76,7 +76,7 @@ publishing {
                     password rootProject.findProperty('mavenPassword')
                 }
             }
-            url rootProject.findProperty('mavenUrl')
+            url 'file:///var/www/html/maven/'
         }
     }
 }
