@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
+println("Building with ${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})")
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version)
     withSourcesJar()
