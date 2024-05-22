@@ -122,7 +122,7 @@ that were important to me. After weighing my options I realized JSON could
 easily meet all of my criteria and the tools/libraries to work with JSON are
 already widely available.
 
-### Can I make a library for Pickle?
+### Can I make a library for Prickle?
 
 Yes, feel free to create and distribute any tools or libraries for Prickle. I
 have chosen to release Prickle as a Java library because that is what I need

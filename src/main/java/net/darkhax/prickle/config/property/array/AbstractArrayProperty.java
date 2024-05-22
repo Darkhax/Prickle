@@ -3,9 +3,9 @@ package net.darkhax.prickle.config.property.array;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.Prickle;
 import net.darkhax.prickle.annotations.Value;
+import net.darkhax.prickle.config.PropertyResolver;
 import net.darkhax.prickle.config.comment.IComment;
 import net.darkhax.prickle.config.property.ObjectProperty;
-import net.darkhax.prickle.config.PropertyResolver;
 import org.slf4j.Logger;
 
 import java.io.IOException;
