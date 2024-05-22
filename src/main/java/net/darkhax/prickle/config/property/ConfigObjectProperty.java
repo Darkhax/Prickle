@@ -4,7 +4,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.annotations.Value;
 import net.darkhax.prickle.config.ConfigObjectSerializer;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.PropertyResolver;
+import net.darkhax.prickle.config.comment.IComment;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -23,8 +24,8 @@ public class ConfigObjectProperty<T> extends ObjectProperty<T> {
      */
     private final ConfigObjectSerializer<?> serializer;
 
-    private ConfigObjectProperty(Field field, Object parent, T defaultValue, Value valueMeta, ConfigObjectSerializer<?> serializer) {
-        super(field, parent, defaultValue, valueMeta);
+    private ConfigObjectProperty(Field field, Object parent, T defaultValue, Value valueMeta, ConfigObjectSerializer<?> serializer, IComment comment) {
+        super(field, parent, defaultValue, valueMeta, comment);
         this.serializer = serializer;
     }
 
@@ -65,7 +66,7 @@ public class ConfigObjectProperty<T> extends ObjectProperty<T> {
 
             if (isConfigObject(value)) {
                 final ConfigObjectSerializer<?> serializer = new ConfigObjectSerializer<>(resolver, value);
-                return new ConfigObjectProperty<>(field, parent, value, valueMeta, serializer);
+                return new ConfigObjectProperty<>(field, parent, value, valueMeta, serializer, resolver.toComment(field, value, valueMeta));
             }
 
             return null;

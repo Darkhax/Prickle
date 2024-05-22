@@ -3,7 +3,9 @@ package net.darkhax.prickle.config.property;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.annotations.Value;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.PropertyResolver;
+import net.darkhax.prickle.config.comment.IComment;
+import net.darkhax.prickle.config.comment.WrappedComment;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class ObjectProperty<T> implements IConfigProperty<T> {
     /**
      * An optional comment that is added to the value.
      */
-    private final Comment comment;
+    private final IComment comment;
 
     /**
      * The default value for the property. This is generally the property that the field is initialized with.
@@ -46,10 +48,10 @@ public class ObjectProperty<T> implements IConfigProperty<T> {
      */
     private final String reference;
 
-    public ObjectProperty(Field field, Object parent, T defaultValue, Value valueMeta) {
+    public ObjectProperty(Field field, Object parent, T defaultValue, Value valueMeta, IComment comment) {
         this.field = field;
         this.parent = parent;
-        this.comment = Comment.of(valueMeta.comment());
+        this.comment = comment;
         this.defaultValue = defaultValue;
         this.writeDefault = valueMeta.writeDefault();
         this.reference = valueMeta.reference();
@@ -60,7 +62,7 @@ public class ObjectProperty<T> implements IConfigProperty<T> {
      *
      * @return The comment for the property.
      */
-    public Comment comment() {
+    public IComment comment() {
         return this.comment;
     }
 
@@ -124,9 +126,9 @@ public class ObjectProperty<T> implements IConfigProperty<T> {
         writer.beginObject();
 
         // Write the comment
-        if (this.comment() != null && !this.comment().isEmpty()) {
+        if (this.comment() != null) {
             writer.name("//");
-            resolver.gson().toJson(this.comment(), Comment.class, writer);
+            resolver.gson().toJson(this.comment(), WrappedComment.class, writer);
         }
 
         // Write the decorators
@@ -211,7 +213,7 @@ public class ObjectProperty<T> implements IConfigProperty<T> {
         @Override
         public ObjectProperty<?> toValue(PropertyResolver resolver, Field field, Object parent, Object value, Value valueMeta) throws IOException {
 
-            return new ObjectProperty<>(field, parent, value, valueMeta);
+            return new ObjectProperty<>(field, parent, value, valueMeta, resolver.toComment(field, value, valueMeta));
         }
     }
 }

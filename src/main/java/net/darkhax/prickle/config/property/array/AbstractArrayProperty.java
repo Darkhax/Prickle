@@ -3,8 +3,9 @@ package net.darkhax.prickle.config.property.array;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.Prickle;
 import net.darkhax.prickle.annotations.Value;
+import net.darkhax.prickle.config.comment.IComment;
 import net.darkhax.prickle.config.property.ObjectProperty;
-import net.darkhax.prickle.config.property.PropertyResolver;
+import net.darkhax.prickle.config.PropertyResolver;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -29,8 +30,8 @@ public abstract class AbstractArrayProperty<T> extends ObjectProperty<T> {
      */
     private final ArraySettings settings;
 
-    public AbstractArrayProperty(Field field, Object parent, T defaultValue, Value valueMeta, ArraySettings meta) {
-        super(field, parent, defaultValue, valueMeta);
+    public AbstractArrayProperty(Field field, Object parent, T defaultValue, Value valueMeta, ArraySettings meta, IComment comment) {
+        super(field, parent, defaultValue, valueMeta, comment);
         this.settings = meta;
     }
 

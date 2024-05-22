@@ -1,8 +1,7 @@
-package net.darkhax.prickle.config.property.adapter;
+package net.darkhax.prickle.config.property;
 
 import net.darkhax.prickle.annotations.Value;
-import net.darkhax.prickle.config.property.IConfigProperty;
-import net.darkhax.prickle.config.property.PropertyResolver;
+import net.darkhax.prickle.config.PropertyResolver;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;

@@ -2,6 +2,7 @@ package net.darkhax.prickle.config.property;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import net.darkhax.prickle.config.PropertyResolver;
 import org.slf4j.Logger;
 
 import java.io.IOException;

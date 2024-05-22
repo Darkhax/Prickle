@@ -6,11 +6,13 @@ import com.google.gson.ToNumberPolicy;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.Prickle;
-import net.darkhax.prickle.config.property.Comment;
-import net.darkhax.prickle.config.property.PropertyResolver;
+import net.darkhax.prickle.config.comment.CommentTypeAdapter;
+import net.darkhax.prickle.config.comment.ICommentResolver;
+import net.darkhax.prickle.config.comment.WrappedComment;
+import net.darkhax.prickle.config.comment.WrappedCommentResolver;
+import net.darkhax.prickle.config.property.IPropertyAdapter;
 import net.darkhax.prickle.config.property.RangedProperty;
 import net.darkhax.prickle.config.property.RegexStringProperty;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
 import net.darkhax.prickle.config.property.array.ArrayProperty;
 import net.darkhax.prickle.config.property.array.CollectionArrayProperty;
 import org.slf4j.Logger;
@@ -122,6 +124,7 @@ public class ConfigManager<T> {
         private final List<IPropertyAdapter<?>> propertyAdapters = new LinkedList<>();
         private final Map<Class<?>, IPropertyAdapter<?>> adapterOverrideCache = new HashMap<>();
         private final List<Function<GsonBuilder, GsonBuilder>> gsonConfigs = new LinkedList<>();
+        private ICommentResolver commentResolver;
         private Logger logger = null;
 
         public Builder(Path filePath) {
@@ -149,12 +152,13 @@ public class ConfigManager<T> {
                         .setNumberToNumberStrategy(ToNumberPolicy.BIG_DECIMAL)
 
                         // Registers a type adapter to handle our implementation of comments.
-                        .registerTypeAdapter(Comment.class, Comment.ADAPTER);
+                        .registerTypeAdapter(WrappedComment.class, CommentTypeAdapter.INSTANCE);
             });
             this.adapter(RegexStringProperty.ADAPTER);
             this.adapter(RangedProperty.ADAPTER);
             this.adapter(ArrayProperty.ADAPTER);
             this.adapter(CollectionArrayProperty.ADAPTER);
+            this.commentResolver(WrappedCommentResolver.DEFAULT);
         }
 
         /**
@@ -206,6 +210,17 @@ public class ConfigManager<T> {
         }
 
         /**
+         * Sets a new comment resolver that should handle creating comments.
+         *
+         * @param resolver The new comment resolver.
+         * @return The same builder instance.
+         */
+        public Builder<T> commentResolver(ICommentResolver resolver) {
+            this.commentResolver = resolver;
+            return this;
+        }
+
+        /**
          * Builds the config manager.
          *
          * @param cfgData The object attach to the config manager. This object will be mapped to a config schema and its
@@ -232,7 +247,7 @@ public class ConfigManager<T> {
             }
             final Gson gson = gsonBuilder.create();
 
-            return new ConfigManager<>(this.filePath, this.logger, cfgData, new PropertyResolver(gson, this.logger, this.propertyAdapters));
+            return new ConfigManager<T>(this.filePath, this.logger, cfgData, new PropertyResolver(gson, this.logger, this.propertyAdapters, this.commentResolver));
         }
     }
 }

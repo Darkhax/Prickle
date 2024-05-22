@@ -1,6 +1,6 @@
 package net.darkhax.prickle.annotations;
 
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.property.IPropertyAdapter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

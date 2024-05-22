@@ -3,8 +3,9 @@ package net.darkhax.prickle.config.property.array;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.annotations.Array;
 import net.darkhax.prickle.annotations.Value;
-import net.darkhax.prickle.config.property.PropertyResolver;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.PropertyResolver;
+import net.darkhax.prickle.config.comment.IComment;
+import net.darkhax.prickle.config.property.IPropertyAdapter;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -26,8 +27,8 @@ public class CollectionArrayProperty<T extends Collection<?>> extends AbstractAr
 
     private final ParameterizedType paramType;
 
-    private CollectionArrayProperty(Field field, Object parent, T defaultValue, ParameterizedType paramType, Value valueMeta, ArraySettings meta) {
-        super(field, parent, defaultValue, valueMeta, meta);
+    private CollectionArrayProperty(Field field, Object parent, T defaultValue, ParameterizedType paramType, Value valueMeta, ArraySettings meta, IComment comment) {
+        super(field, parent, defaultValue, valueMeta, meta, comment);
         this.paramType = paramType;
     }
 
@@ -65,7 +66,7 @@ public class CollectionArrayProperty<T extends Collection<?>> extends AbstractAr
             if (value instanceof Collection<?> collection && field.getGenericType() instanceof ParameterizedType paramType) {
                 final Array arrayMeta = field.getAnnotation(Array.class);
                 final ArraySettings settings = arrayMeta != null ? new ArraySettings(arrayMeta) : ArraySettings.DEFAULT;
-                return new CollectionArrayProperty<>(field, parent, collection, paramType, valueMeta, settings);
+                return new CollectionArrayProperty<>(field, parent, collection, paramType, valueMeta, settings, resolver.toComment(field, value, valueMeta));
             }
             return null;
         }

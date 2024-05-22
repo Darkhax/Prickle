@@ -1,9 +1,15 @@
-package net.darkhax.prickle.config.property;
+package net.darkhax.prickle.config;
 
 import com.google.gson.Gson;
 import net.darkhax.prickle.annotations.Adapter;
 import net.darkhax.prickle.annotations.Value;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.comment.IComment;
+import net.darkhax.prickle.config.comment.ICommentResolver;
+import net.darkhax.prickle.config.property.ConfigObjectProperty;
+import net.darkhax.prickle.config.property.IConfigProperty;
+import net.darkhax.prickle.config.property.IPropertyAdapter;
+import net.darkhax.prickle.config.property.ObjectProperty;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -38,16 +44,19 @@ public class PropertyResolver {
      */
     private final Gson gson;
 
+    private final ICommentResolver commentResolver;
+
     /**
      * A logger for errors and warnings.
      */
     private final Logger logger;
 
-    public PropertyResolver(Gson gson, Logger logger, List<IPropertyAdapter<?>> propertyAdapters) {
+    public PropertyResolver(Gson gson, Logger logger, List<IPropertyAdapter<?>> propertyAdapters, ICommentResolver commentResolver) {
         this.propertyAdapters = propertyAdapters;
         this.gson = gson;
         this.logger = logger;
         this.configObjectAdapter = ConfigObjectProperty.adapter(this);
+        this.commentResolver = commentResolver;
     }
 
     /**
@@ -57,6 +66,20 @@ public class PropertyResolver {
      */
     public Gson gson() {
         return gson;
+    }
+
+    /**
+     * Attempts to resolve a comment for a config property.
+     *
+     * @param field     The field to resolve.
+     * @param value     The value of the field.
+     * @param valueMeta The Value annotation that was on the field.
+     * @return The comment that was resolved. If null no comment was specified.
+     * @throws IOException An IOException may be raised when the resolver encounters a fatal error.
+     */
+    @Nullable
+    public IComment toComment(Field field, Object value, Value valueMeta) throws IOException {
+        return this.commentResolver.resolve(field, value, valueMeta);
     }
 
     /**

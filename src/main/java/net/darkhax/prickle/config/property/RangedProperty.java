@@ -6,7 +6,8 @@ import net.darkhax.prickle.annotations.RangedFloat;
 import net.darkhax.prickle.annotations.RangedInt;
 import net.darkhax.prickle.annotations.RangedLong;
 import net.darkhax.prickle.annotations.Value;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.PropertyResolver;
+import net.darkhax.prickle.config.comment.IComment;
 import net.darkhax.prickle.util.NumberUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -38,8 +39,8 @@ public class RangedProperty<T extends Number> extends ObjectProperty<T> {
     @Nullable
     private final T max;
 
-    private RangedProperty(Field field, Object parent, T defaultValue, T min, T max, Value valueMeta) {
-        super(field, parent, defaultValue, valueMeta);
+    private RangedProperty(Field field, Object parent, T defaultValue, T min, T max, Value valueMeta, IComment comment) {
+        super(field, parent, defaultValue, valueMeta, comment);
         this.min = min;
         this.max = max;
         if (!this.validate(defaultValue)) {
@@ -111,7 +112,7 @@ public class RangedProperty<T extends Number> extends ObjectProperty<T> {
                 if (ranged != null) {
                     final Integer min = ranged.min() != Integer.MIN_VALUE ? ranged.min() : null;
                     final Integer max = ranged.max() != Integer.MAX_VALUE ? ranged.max() : null;
-                    return new RangedProperty<>(field, parent, intVal, min, max, valueMeta);
+                    return new RangedProperty<>(field, parent, intVal, min, max, valueMeta, resolver.toComment(field, value, valueMeta));
                 }
             }
 
@@ -120,7 +121,7 @@ public class RangedProperty<T extends Number> extends ObjectProperty<T> {
                 if (ranged != null) {
                     final Long min = ranged.min() != Long.MIN_VALUE ? ranged.min() : null;
                     final Long max = ranged.max() != Long.MAX_VALUE ? ranged.max() : null;
-                    return new RangedProperty<>(field, parent, longVal, min, max, valueMeta);
+                    return new RangedProperty<>(field, parent, longVal, min, max, valueMeta, resolver.toComment(field, value, valueMeta));
                 }
             }
 
@@ -129,7 +130,7 @@ public class RangedProperty<T extends Number> extends ObjectProperty<T> {
                 if (ranged != null) {
                     final Float min = ranged.min() != -Float.MAX_VALUE ? ranged.min() : null;
                     final Float max = ranged.max() != Float.MAX_VALUE ? ranged.max() : null;
-                    return new RangedProperty<>(field, parent, floatVal, min, max, valueMeta);
+                    return new RangedProperty<>(field, parent, floatVal, min, max, valueMeta, resolver.toComment(field, value, valueMeta));
                 }
             }
 
@@ -138,7 +139,7 @@ public class RangedProperty<T extends Number> extends ObjectProperty<T> {
                 if (ranged != null) {
                     final Double min = ranged.min() != -Double.MAX_VALUE ? ranged.min() : null;
                     final Double max = ranged.max() != Double.MAX_VALUE ? ranged.max() : null;
-                    return new RangedProperty<>(field, parent, doubleVal, min, max, valueMeta);
+                    return new RangedProperty<>(field, parent, doubleVal, min, max, valueMeta, resolver.toComment(field, value, valueMeta));
                 }
             }
 

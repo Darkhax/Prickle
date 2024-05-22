@@ -3,8 +3,9 @@ package net.darkhax.prickle.config.property.array;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.annotations.Array;
 import net.darkhax.prickle.annotations.Value;
-import net.darkhax.prickle.config.property.PropertyResolver;
-import net.darkhax.prickle.config.property.adapter.IPropertyAdapter;
+import net.darkhax.prickle.config.PropertyResolver;
+import net.darkhax.prickle.config.comment.IComment;
+import net.darkhax.prickle.config.property.IPropertyAdapter;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -22,8 +23,8 @@ public class ArrayProperty<T> extends AbstractArrayProperty<Object> {
      */
     public static final Adapter ADAPTER = new Adapter();
 
-    private ArrayProperty(Field field, Object parent, T defaultValue, Value valueMeta, ArraySettings meta) {
-        super(field, parent, defaultValue, valueMeta, meta);
+    private ArrayProperty(Field field, Object parent, T defaultValue, Value valueMeta, ArraySettings meta, IComment comment) {
+        super(field, parent, defaultValue, valueMeta, meta, comment);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class ArrayProperty<T> extends AbstractArrayProperty<Object> {
             if (field.getType().isArray()) {
                 final Array arrayMeta = field.getAnnotation(Array.class);
                 final ArraySettings settings = arrayMeta != null ? new ArraySettings(arrayMeta) : ArraySettings.DEFAULT;
-                return new ArrayProperty<>(field, parent, value, valueMeta, settings);
+                return new ArrayProperty<>(field, parent, value, valueMeta, settings, resolver.toComment(field, value, valueMeta));
             }
             return null;
         }

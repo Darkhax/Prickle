@@ -4,7 +4,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.darkhax.prickle.annotations.Value;
 import net.darkhax.prickle.config.property.IConfigProperty;
-import net.darkhax.prickle.config.property.PropertyResolver;
 import org.slf4j.Logger;
 
 import java.io.IOException;
