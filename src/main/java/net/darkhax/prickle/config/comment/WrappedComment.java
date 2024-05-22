@@ -1,7 +1,11 @@
 package net.darkhax.prickle.config.comment;
 
+import net.darkhax.prickle.annotations.Value;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +13,11 @@ import java.util.List;
  * Represents a comment in a Prickle file. This supports single line comments or multi-line comments as arrays.
  */
 public class WrappedComment extends Comment {
+
+    /**
+     * The default wrapped comment resolver. Lines will be wrapped to 80 and multi-line comments will be padded.
+     */
+    public static final ICommentResolver RESOLVER = new WrappedCommentResolver(80, true);
 
     /**
      * Create a wrapped comment.
@@ -51,5 +60,26 @@ public class WrappedComment extends Comment {
             lines.add(pad ? StringUtils.rightPad(currentLine.toString(), lineLength) : currentLine.toString().trim());
         }
         return lines.toArray(String[]::new);
+    }
+
+    /**
+     * Resolves comments by wrapping the text to the specified width and optionally padding multi-line comments to the
+     * maximum line length.
+     */
+    public static class WrappedCommentResolver implements ICommentResolver {
+
+        private final int lineLength;
+        private final boolean padLength;
+
+        public WrappedCommentResolver(int lineLength, boolean padLength) {
+            this.lineLength = lineLength;
+            this.padLength = padLength;
+        }
+
+        @Nullable
+        @Override
+        public WrappedComment resolve(Field field, @Nullable Object value, Value valueMeta) throws IOException {
+            return ICommentResolver.hasComment(valueMeta) ? new WrappedComment(valueMeta.comment(), this.lineLength, this.padLength) : null;
+        }
     }
 }

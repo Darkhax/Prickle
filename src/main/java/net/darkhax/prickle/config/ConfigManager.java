@@ -9,7 +9,6 @@ import net.darkhax.prickle.Prickle;
 import net.darkhax.prickle.config.comment.CommentTypeAdapter;
 import net.darkhax.prickle.config.comment.ICommentResolver;
 import net.darkhax.prickle.config.comment.WrappedComment;
-import net.darkhax.prickle.config.comment.WrappedCommentResolver;
 import net.darkhax.prickle.config.property.IPropertyAdapter;
 import net.darkhax.prickle.config.property.RangedProperty;
 import net.darkhax.prickle.config.property.RegexStringProperty;
@@ -158,7 +157,7 @@ public class ConfigManager<T> {
             this.adapter(RangedProperty.ADAPTER);
             this.adapter(ArrayProperty.ADAPTER);
             this.adapter(CollectionArrayProperty.ADAPTER);
-            this.commentResolver(WrappedCommentResolver.DEFAULT);
+            this.commentResolver(WrappedComment.RESOLVER);
         }
 
         /**

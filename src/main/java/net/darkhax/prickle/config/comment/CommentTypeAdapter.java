@@ -11,12 +11,18 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
+/**
+ * A GSON type adapter that handles reading and writing comments through GSON. This will serialize the values from
+ * {@link IComment#getLines()} and deserialize values to the basic {@link Comment} that only holds the data.
+ */
 public final class CommentTypeAdapter implements JsonSerializer<IComment>, JsonDeserializer<IComment> {
 
+    /**
+     * The single instance of this type adapter.
+     */
     public static final CommentTypeAdapter INSTANCE = new CommentTypeAdapter();
 
     private CommentTypeAdapter() {
-
     }
 
     @Override
