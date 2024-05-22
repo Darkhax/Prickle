@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ConfigManager<T> {
 
@@ -123,7 +122,8 @@ public class ConfigManager<T> {
         private final Path filePath;
         private final List<IPropertyAdapter<?>> propertyAdapters = new LinkedList<>();
         private final Map<Class<?>, IPropertyAdapter<?>> adapterOverrideCache = new HashMap<>();
-        private final List<Function<GsonBuilder, GsonBuilder>> gsonConfigs = new LinkedList<>();
+        private final List<Consumer<GsonBuilder>> gsonConfigs = new LinkedList<>();
+        private GsonBuilder gsonBuilder;
         private ICommentResolver commentResolver;
         private Logger logger = null;
 
@@ -185,26 +185,24 @@ public class ConfigManager<T> {
         }
 
         /**
+         * Overrides the GsonBuilder with a new one. This builder will still be configured using the options from
+         * {@link #gsonConfig(Consumer)}.
+         *
+         * @param builder The new GSON builder.
+         * @return The same builder instance.
+         */
+        public Builder<T> gsonBuilder(GsonBuilder builder) {
+            this.gsonBuilder = builder;
+            return this;
+        }
+
+        /**
          * Registers a consumer that can be used to set up the underlying Gson instance.
          *
          * @param config A consumer that accepts the GsonBuilder and configures it.
          * @return The same builder instance.
          */
         public Builder<T> gsonConfig(Consumer<GsonBuilder> config) {
-            return this.gsonConfig(gson -> {
-                config.accept(gson);
-                return gson;
-            });
-        }
-
-        /**
-         * Registers a consumer that can be used to set up or replace the underlying Gson instance.
-         *
-         * @param config A function that accepts the GsonBuilder and then returns a GsonBuilder that will replace the
-         *               previous one.
-         * @return The same builder instance.
-         */
-        public Builder<T> gsonConfig(Function<GsonBuilder, GsonBuilder> config) {
             this.gsonConfigs.add(config);
             return this;
         }
@@ -241,11 +239,10 @@ public class ConfigManager<T> {
                 this.logger = LoggerFactory.getLogger(cfgData.getClass());
             }
 
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            for (Function<GsonBuilder, GsonBuilder> gsonConfig : this.gsonConfigs) {
-                gsonBuilder = gsonConfig.apply(gsonBuilder);
+            for (Consumer<GsonBuilder> gsonConfig : this.gsonConfigs) {
+                gsonConfig.accept(this.gsonBuilder);
             }
-            final Gson gson = gsonBuilder.create();
+            final Gson gson = this.gsonBuilder.create();
 
             return new ConfigManager<T>(this.filePath, this.logger, cfgData, new PropertyResolver(gson, this.logger, this.propertyAdapters, this.commentResolver));
         }
