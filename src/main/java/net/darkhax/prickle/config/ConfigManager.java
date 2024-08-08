@@ -238,6 +238,10 @@ public class ConfigManager<T> {
                 this.logger = LoggerFactory.getLogger(cfgData.getClass());
             }
 
+            if (this.gsonBuilder == null) {
+                this.gsonBuilder = new GsonBuilder();
+            }
+
             for (Consumer<GsonBuilder> gsonConfig : this.gsonConfigs) {
                 gsonConfig.accept(this.gsonBuilder);
             }
